@@ -15,6 +15,7 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 
 import Header from './src/components/Header';
@@ -54,6 +55,22 @@ const App: () => React$Node = () => {
               </Text>
             </View>
             <View style={styles.sectionContainer}>
+              <TextInput
+                style={{
+                  height: 40,
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                }}
+                defaultValue="login"
+              />
+              <TextInput
+                style={{
+                  height: 40,
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                }}
+                defaultValue="password"
+              />
               <TouchableOpacity
                 accessibilityRole={'button'}
                 onPress={() => login()}>
