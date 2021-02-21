@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,30 +14,35 @@ import {
   View,
   Text,
   StatusBar,
-  TouchableOpacity,
+  Button,
   TextInput,
 } from 'react-native';
 
 import Header from './src/components/Header';
 import Colors from './src/theme/Colors';
-
-const login = () => {
-  const dupa = [
-    {
-      id: 1,
-      name: 'Marcin',
-    },
-    {
-      id: 2,
-      name: 'Marian',
-    },
-  ];
-
-  console.log('do something ?');
-  console.log(dupa);
-};
+import ScenesList from './src/components/ScenesList';
+import {OBSContext} from './src/Contexts/OBSContext';
 
 const App: () => React$Node = () => {
+  const [websocketAddress, setWebsocketAddress] = useState(
+    '192.168.31.189:4444',
+  );
+  const obsContextData = useContext(OBSContext);
+
+  const handleTextChange = (text) => {
+    setWebsocketAddress(text);
+  };
+
+  const loginToWebsocket = () => {
+    console.log('login to websocket....');
+    obsContextData.connect(websocketAddress);
+  };
+
+  const logoutFromWebsocket = () => {
+    console.log('logout from websocket...');
+    obsContextData.disconnect();
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -55,28 +60,30 @@ const App: () => React$Node = () => {
               </Text>
             </View>
             <View style={styles.sectionContainer}>
+              <Text>{websocketAddress}</Text>
               <TextInput
                 style={{
                   height: 40,
                   borderColor: 'gray',
                   borderWidth: 1,
                 }}
-                defaultValue="login"
+                placeholder="Insert websocketAddress here!"
+                onChangeText={handleTextChange}
+                value={websocketAddress}
               />
-              <TextInput
-                style={{
-                  height: 40,
-                  borderColor: 'gray',
-                  borderWidth: 1,
-                }}
-                defaultValue="password"
-              />
-              <TouchableOpacity
-                accessibilityRole={'button'}
-                onPress={() => login()}>
-                <Text>Login</Text>
-              </TouchableOpacity>
+              {obsContextData.obs ? (
+                <Button
+                  title={'Logout to websocket'}
+                  onPress={() => logoutFromWebsocket()}
+                />
+              ) : (
+                <Button
+                  title={'Login to websocket'}
+                  onPress={() => loginToWebsocket()}
+                />
+              )}
             </View>
+            <ScenesList setCurrentScene={obsContextData.setCurrentScene}/>
           </View>
         </ScrollView>
       </SafeAreaView>
